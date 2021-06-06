@@ -17,3 +17,14 @@ class ObjectData:
     
     def get_image_data(self):
         return self.__img_bin_data, self.__x_pos, self.__y_pos, self.__x_len, self.__y_len
+    
+    @property
+    def img_bin_data(self):
+        return self.__img_bin_data
+    
+    @img_bin_data.setter
+    def img_bin_data(self, new_data: list):
+        self.__img_bin_data = new_data
+        self.__x_len = len(new_data[0])
+        self.__y_len = len(new_data)
+    

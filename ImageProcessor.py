@@ -23,8 +23,11 @@ class ImageProcessor(Thread):
                 
             self.__default_frame.append(row)
     
-    def add_layer(self, obj_data: ObjectData):
+    def add_to_layer(self, obj_data: ObjectData):
         self.__layer.append(obj_data)
+        
+    def remove_from_layer(self, obj_data: ObjectData):
+        self.__layer.remove(obj_data)
         
     def __convert_to_byte_img_data(self, img_bin_data):
         result = []

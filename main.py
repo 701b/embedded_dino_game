@@ -144,6 +144,8 @@ while True:
         dino_obj.set_pos(dino_x, dino_y)
         tree_obj.set_pos(tree_x, tree_y)
         aerial_obstacle_obj.set_pos(aerial_x, aerial_y)
+
+        score_obj.set_string(f'SCORE:0')
         
         sleep(1)
         

@@ -14,6 +14,9 @@ class ObjectData:
     def set_pos(self, x_pos: int, y_pos: int):
         self.__x_pos = x_pos
         self.__y_pos = y_pos
+        
+    def get_pos(self):
+        return self.__x_pos, self.__y_pos
     
     def get_image_data(self):
         return self.__img_bin_data, self.__x_pos, self.__y_pos, self.__x_len, self.__y_len

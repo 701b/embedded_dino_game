@@ -22,13 +22,12 @@ dino_img_bin_data = [
     ]
 
 
-
-
 image_processor = ImageProcessor()
 dino_obj = ObjectData(dino_img_bin_data)
-image_processor.add_layer(dino_obj)
+image_processor.add_to_layer(dino_obj)
 image_processor.start()
 
 for x in range(0, 128):
     dino_obj.set_pos(x, 0)
+    print(f'dino updated: {x}')
     sleep(1 / 30)

@@ -1,6 +1,5 @@
 from threading import Thread
 from time import sleep
-import copy
 
 import ObjectData
 from deviceControl import *
@@ -13,15 +12,6 @@ class ImageProcessor(Thread):
     def __init__(self):
         super(ImageProcessor, self).__init__()
         self.__layer = []
-        self.__default_frame = []
-
-        for y in range(0, 64):
-            row = []
-            
-            for x in range(0, 128):
-                row.append(0)
-                
-            self.__default_frame.append(row)
     
     def add_to_layer(self, obj_data: ObjectData):
         self.__layer.append(obj_data)
@@ -31,21 +21,34 @@ class ImageProcessor(Thread):
         
     def __convert_to_byte_img_data(self, img_bin_data):
         result = []
+        width = len(img_bin_data[0])
     
         if len(img_bin_data) % 8 != 0:
             raise Exception('The number of rows of image binary data list must be a multiple of 8.')
     
         for row_index, row in enumerate(img_bin_data):
+            byte_pos = int(row_index / 8)
+            byte_index = row_index % 8
+            
             for col_index, value in enumerate(img_bin_data[row_index]):
-                if row_index % 8 == 0:
+                if byte_index == 0:
                     result.append(value)
                 else:
-                    result[int(row_index / 8) * len(img_bin_data[row_index]) + col_index] = result[int(row_index / 8) * len(img_bin_data[row_index]) + col_index] | (value << (row_index % 8))
+                    target_index = byte_pos * width + col_index
+                    result[target_index] = result[target_index] | (value << byte_index)
     
         return result
     
     def __render(self) -> list:
-        rendered_frame = copy.deepcopy(self.__default_frame)
+        rendered_frame = []
+        
+        for y in range(0, 64):
+            row = []
+        
+            for x in range(0, 128):
+                row.append(0)
+        
+            rendered_frame.append(row)
         
         for obj_data in self.__layer:
             img_byte_data, x_pos, y_pos, x_len, y_len = obj_data.get_image_data()

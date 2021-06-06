@@ -53,6 +53,9 @@ class ImageProcessor(Thread):
         for obj_data in self.__layer:
             img_byte_data, x_pos, y_pos, x_len, y_len = obj_data.get_image_data()
             
+            x_pos = int(x_pos)
+            y_pos = int(y_pos)
+            
             for y_index, y in enumerate(range(y_pos, y_pos + y_len)):
                 if y >= S_HEIGHT:
                     break

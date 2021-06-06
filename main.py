@@ -1,4 +1,6 @@
+import time
 from time import sleep
+import math
 
 from deviceControl import get_btn_input
 from ImageProcessor import ImageProcessor
@@ -91,30 +93,70 @@ aerial_obstacle_img_bin_data = [
 
 image_processor = ImageProcessor()
 dino_obj = ObjectData(dino_img_bin_data)
-aerial_obstacle_obj = ObjectData(aerial_obstacle_img_bin_data)
 image_processor.add_to_layer(dino_obj)
-image_processor.add_to_layer(aerial_obstacle_obj)
+
+tree_obj = ObjectData(tree_img_bin_data)
+image_processor.add_to_layer(tree_obj)
+
+score_obj = StringData('SCORE:0')
+image_processor.add_to_layer(score_obj)
+
 image_processor.start()
 
-dino_obj.set_pos(20, 50)
-aerial_obstacle_obj.set_pos(40, 14)
+dino_height = 14
+dino_bottom = 50
+dino_x = 40
+dino_y = dino_bottom
+current_jump_stage = 0
+JUMP_STAGE = 50
 
-is_dino_stand = True
+tree_height = 10
+tree_x = 128
+tree_y = 54
 
 while True:
-    if get_btn_input(21):
-        if is_dino_stand:
-            dino_obj.img_bin_data = slide_dino_img_bin_data
-            dino_x_pos, dino_y_pos = dino_obj.get_pos()
-            dino_obj.set_pos(dino_x_pos, dino_y_pos + 7)
+    if get_btn_input(21):  # btn21 = start game
+        begin = time.time()
+        while True:
+            if get_btn_input(20) and current_jump_stage == 0:
+                current_jump_stage = JUMP_STAGE
             
-            is_dino_stand = False
-    else:
-        if not is_dino_stand:
-            dino_obj.img_bin_data = dino_img_bin_data
-            dino_x_pos, dino_y_pos = dino_obj.get_pos()
-            dino_obj.set_pos(dino_x_pos, dino_y_pos - 7)
+            if current_jump_stage > 0:
+                if current_jump_stage >= 25:
+                    dino_y += 1.5 * math.cos(math.radians(180 / JUMP_STAGE * current_jump_stage))
+                else:
+                    dino_y += 1.5 * math.cos(math.radians(180 / JUMP_STAGE * current_jump_stage))
+
+                current_jump_stage -= 1
+            
+            elif current_jump_stage == 0:
+                dino_y = dino_bottom
+            
+            tree_x -= 1
+            if tree_x <= 0:
+                tree_x = 128
+            
+            dino_obj.set_pos(dino_x, dino_y)
+            tree_obj.set_pos(tree_x, tree_y)
+            sleep(1 / 30)
+            
+            if dino_x + 10 == tree_x:
+                if dino_y <= tree_y + tree_height and dino_y >= tree_y:
+                    break
+            
+            current = int(time.time() - begin)
+            score_obj.set_string(f'SCORE:{current}')
     
-            is_dino_stand = True
-        
-    sleep(1 / 30)
+    dino_height = 14
+    dino_bottom = 50
+    dino_x = 64
+    dino_y = dino_bottom
+    jump_top = 50
+    current_jump_stage = 0
+    
+    tree_height = 10
+    tree_x = 128
+    tree_y = 54
+    
+    dino_obj.set_pos(dino_x, dino_y)
+    tree_obj.set_pos(tree_x, tree_y)

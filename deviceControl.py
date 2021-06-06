@@ -74,7 +74,7 @@ def update_ssd1306(data_to_display: list, start_x: int = 0, start_y: int = 0, en
         end_x: End column
         end_y: Start page
     """
-    if len(data_to_display) != (end_x - start_x) * (end_y - start_y):
+    if len(data_to_display) != (end_x - start_x + 1) * (end_y - start_y + 1):
         raise Exception('Data size and length do not match.')
     
     command_ssd1306(0x20)

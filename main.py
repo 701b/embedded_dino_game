@@ -1,3 +1,5 @@
+from time import sleep
+
 import deviceControl
 from ImageProcessor import ImageProcessor
 from ObjectData import ObjectData
@@ -21,5 +23,10 @@ dino_img_bin_data = [
 
 
 image_processor = ImageProcessor()
-image_processor.add_layer(ObjectData(dino_img_bin_data))
+dino_obj = ObjectData(dino_img_bin_data)
+image_processor.add_layer(dino_obj)
 image_processor.start()
+
+for x in range(0, 128):
+    dino_obj.set_pos(x, 0)
+    sleep(0.1)

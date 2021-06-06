@@ -1,5 +1,6 @@
 from threading import Thread
 from time import sleep
+import copy
 
 import ObjectData
 from deviceControl import *
@@ -33,10 +34,6 @@ class ImageProcessor(Thread):
     
         for row_index, row in enumerate(img_bin_data):
             for col_index, value in enumerate(img_bin_data[row_index]):
-                # if row_index % 8 == 0:
-                #     result.append(value)
-                # else:
-                #     result[int(row_index / 8) * len(img_bin_data[row_index]) + col_index] = (result[int(row_index / 8) * len(img_bin_data[row_index]) + col_index] << 1) | value
                 if row_index % 8 == 0:
                     result.append(value)
                 else:
@@ -45,13 +42,19 @@ class ImageProcessor(Thread):
         return result
     
     def __render(self) -> list:
-        rendered_frame = self.__default_frame
+        rendered_frame = copy.deepcopy(self.__default_frame)
         
         for obj_data in self.__layer:
             img_byte_data, x_pos, y_pos, x_len, y_len = obj_data.get_image_data()
             
             for y_index, y in enumerate(range(y_pos, y_pos + y_len)):
+                if y >= S_HEIGHT:
+                    break
+                    
                 for x_index, x in enumerate(range(x_pos, x_pos + x_len)):
+                    if x >= S_WIDTH:
+                        break
+                    
                     rendered_frame[y][x] = img_byte_data[y_index][x_index]
         
         return self.__convert_to_byte_img_data(rendered_frame)
